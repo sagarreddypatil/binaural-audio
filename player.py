@@ -28,6 +28,7 @@ class AudioPlayer:
     def run(self):
         while self.running:
             while self.len_pending() == 0 and self.running:
+                # need to yield here to let main thread queue chunks
                 time.sleep(0.0)
 
             if not self.running:
