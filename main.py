@@ -1,12 +1,13 @@
 import time
+from pathlib import Path
+from threading import Thread
+
 import pyaudio
 import numpy as np
 from scipy import signal
-from pathlib import Path
-from threading import Thread
 import dearpygui.dearpygui as dpg
 
-# from kemar import get_hrtf
+from player import AudioPlayer
 from sadie import get_hrtf
 from util import read_mono_wav
 
@@ -31,40 +32,7 @@ def make_binaural(audio: np.ndarray, az: float, el: float, r: float):
 
 
 test_audio = read_mono_wav(Path("test.wav"))
-
-p = pyaudio.PyAudio()
-stream = p.open(format=pyaudio.paInt16, channels=2, rate=44100, output=True)
-
-
-def write_to_stream(left: np.ndarray, right: np.ndarray):
-    assert len(left) == len(right)
-    audio = np.column_stack((left, right))
-    audio = (audio * 32767).astype(np.int16).tobytes()
-    stream.write(audio)
-
-
-chunks = []
-run = True
-
-
-def writer():
-    global chunks, run
-
-    while len(chunks) == 0:
-        pass
-
-    while run:
-        if len(chunks) > 0:
-            try:
-                write_to_stream(*chunks.pop(0))
-            except Exception:
-                break
-        else:
-            time.sleep(0.0)
-
-
-writer_thr = Thread(target=writer)
-writer_thr.start()
+player = AudioPlayer()
 
 az = 0
 el = 0
@@ -97,6 +65,7 @@ dpg.show_viewport()
 CHUNK_SIZE = 2048
 FFT_SIZE = 8192
 i = 0
+player.start()
 while dpg.is_dearpygui_running():
     dpg.render_dearpygui_frame()
 
@@ -109,20 +78,17 @@ while dpg.is_dearpygui_running():
 
     i = int(dpg.get_value(seek))
 
-    if len(chunks) < 1:
+    if player.len_pending() < 1:
         # print(i, az, el, r)
         audio = test_audio[i : i + FFT_SIZE]
         # left, right = audio, audio
         left, right = make_binaural(audio, az, el, r)
         assert len(left) == len(right)
         left, right = left[:CHUNK_SIZE], right[:CHUNK_SIZE]
-        chunks.append((left, right))
+        player.add_chunk(np.column_stack((left, right)))
         i += CHUNK_SIZE
         dpg.set_value(seek, i)
 
 
-run = False
-writer_thr.join()
-
+player.stop()
 dpg.destroy_context()
-stream.stop_stream()
