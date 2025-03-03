@@ -4,7 +4,7 @@ from pathlib import Path
 from functools import cache
 from util import read_stereo_wav
 
-hrtf_dir = Path("./44K_16bit")
+hrtf_dir = Path("./data/sadie-d1/D1_HRIR_WAV/44K_16bit/")
 
 pat = re.compile(r"azi_(-?\d+),(\d+)_ele_(-?\d+),(\d+)\.wav")
 azels = []
