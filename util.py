@@ -11,7 +11,7 @@ def read_audio(path: Path | str, ch=1):
     stream = stream.output("-", format="s16le", acodec="pcm_s16le", ac=ch, ar="44100")
 
     try:
-        data, err = stream.run(capture_stdout=True, capture_stderr=True)
+        data, _ = stream.run(capture_stdout=True, capture_stderr=True)
     except ffmpeg.Error as e:
         print(f"Error occurred: {e.stderr.decode()}")
         raise

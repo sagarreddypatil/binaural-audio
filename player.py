@@ -38,9 +38,7 @@ class AudioPlayer:
             self.stream.write(audio)
 
     def start(self):
-        self.stream = p.open(
-            format=pyaudio.paInt16, channels=2, rate=44100, output=True
-        )
+        self.stream = p.open(format=pyaudio.paInt16, channels=2, rate=44100, output=True)
         self.running = True
         self.thread = Thread(target=self.run, daemon=True)
         self.thread.start()
