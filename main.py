@@ -1,15 +1,12 @@
-import time
 from pathlib import Path
-from threading import Thread
 
-import pyaudio
 import numpy as np
 from scipy import signal
 import dearpygui.dearpygui as dpg
 
 from player import AudioPlayer
 from sadie import get_hrtf
-from util import read_mono_wav
+from util import read_audio
 
 
 def make_binaural(audio: np.ndarray, az: float, el: float, r: float):
@@ -31,7 +28,7 @@ def make_binaural(audio: np.ndarray, az: float, el: float, r: float):
     return binaural_left, binaural_right
 
 
-test_audio = read_mono_wav(Path("test.wav"))
+test_audio = read_audio(Path("test.mp3"), 1)[:,0]
 player = AudioPlayer()
 
 az = 0

@@ -2,7 +2,7 @@ import os
 import re
 from pathlib import Path
 from functools import cache
-from util import read_stereo_wav
+from util import read_audio
 
 hrtf_dir = Path("./data/sadie-d1/D1_HRIR_WAV/44K_16bit/")
 
@@ -23,7 +23,7 @@ def get_hrtf(az, el):
     az, el, fn = azel
     path = hrtf_dir / fn
 
-    audio = read_stereo_wav(path)
+    audio = read_audio(path, 2)
     left, right = audio[:, 0], audio[:, 1]
     return left, right
 

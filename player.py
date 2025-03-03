@@ -30,6 +30,9 @@ class AudioPlayer:
             while self.len_pending() == 0 and self.running:
                 time.sleep(0.0)
 
+            if not self.running:
+                continue
+
             audio = self.pop_chunk()
             audio = (audio * 32767).astype("int16").tobytes()
             self.stream.write(audio)

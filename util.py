@@ -1,21 +1,23 @@
 from pathlib import Path
+import ffmpeg
 import numpy as np
-import wave
 
 
-def read_mono_wav(path: Path):
-    out = read_stereo_wav(path)
-    assert out.shape[1] == 1
-    return out[:, 0]
+def read_audio(path: Path | str, ch=1):
+    if isinstance(path, str):
+        path = Path(path)
 
+    stream = ffmpeg.input(str(path.absolute()))
+    stream = stream.output("-", format="s16le", acodec="pcm_s16le", ac=ch, ar="44100")
 
-def read_stereo_wav(path: Path):
-    with wave.open(path.open("rb")) as wav:
-        channels = wav.getnchannels()
-        assert wav.getsampwidth() == 2
-        assert wav.getframerate() == 44100
+    try:
+        data, err = stream.run(capture_stdout=True, capture_stderr=True)
+    except ffmpeg.Error as e:
+        print(f"Error occurred: {e.stderr.decode()}")
+        raise
 
-        data = wav.readframes(wav.getnframes())
-        data = np.frombuffer(data, dtype=np.int16)
-        data = data.reshape(-1, channels)
-        return data / 32768.0
+    data = np.frombuffer(data, dtype=np.int16)
+    data = data.reshape(-1, ch)
+    data = data / 32768.0
+
+    return data
