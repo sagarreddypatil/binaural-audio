@@ -9,3 +9,6 @@ wheels/
 # Virtual environments
 .venv
 kemar-full/
+*.wav
+44K_16bit/
+*.mp3

@@ -4,4 +4,10 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "dearpygui>=2.0.0",
+    "numpy>=2.2.3",
+    "pyaudio>=0.2.14",
+    "scipy>=1.15.2",
+    "wave>=0.0.2",
+]
