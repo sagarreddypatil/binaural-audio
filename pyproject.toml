@@ -1,9 +1,9 @@
 [project]
-name = "hrtf-test"
+name = "binaural-audio"
 version = "0.1.0"
-description = "Add your description here"
+description = "simple binaural audio with fftconvolve and SADIE HRTFs"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
     "click>=8.1.8",
     "dearpygui>=2.0.0",
