@@ -34,7 +34,7 @@ def main(input_file: str):
     dpg.show_viewport()
 
     CHUNK_SIZE = 2048
-    FFT_SIZE = 8192
+    FFT_SIZE = 4096 - 512
     i = 0
     player.start()
     while dpg.is_dearpygui_running():
@@ -50,11 +50,13 @@ def main(input_file: str):
         i = int(dpg.get_value(seek))
 
         if player.len_pending() < 1:
-            audio = test_audio[i : i + FFT_SIZE]
+            ei = i + CHUNK_SIZE
+            si = max(ei - FFT_SIZE, 0)
+            audio = test_audio[si:ei]
             # left, right = audio, audio
             left, right = make_binaural(audio, az, el, r)
             assert len(left) == len(right)
-            left, right = left[:CHUNK_SIZE], right[:CHUNK_SIZE]
+            left, right = left[-CHUNK_SIZE:], right[-CHUNK_SIZE:]
             player.add_chunk(np.column_stack((left, right)))
             i += CHUNK_SIZE
             dpg.set_value(seek, i)
