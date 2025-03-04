@@ -24,5 +24,5 @@ sudo apt install python3-pyaudio # Debian-based
 
 ```bash
 ./download.sh # download HRTFs, saved to data/
-uv run main.py /path/to/file.mp3 # doesn't have to be mp3, any audio format works
+uv run src/main.py /path/to/file.mp3 # doesn't have to be mp3, any audio format works
 ```
